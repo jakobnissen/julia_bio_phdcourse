@@ -1,0 +1,7 @@
+[deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+GZip = "92fee26a-97fe-5a0c-ad85-20a5f3185b63"
+GeneticVariation = "9bc6ac9d-e6b2-5f70-b0a8-242a01662520"
+PopGen = "af524d12-c74b-11e9-22a8-3b091653023f"
+PopGenSims = "e670a858-c023-4621-870e-30d0f49b8322"
+UnicodePlots = "b8865327-cd53-5732-bb35-84acbb429228"

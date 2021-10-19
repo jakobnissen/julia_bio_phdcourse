@@ -5,6 +5,16 @@ lobsters = vcf("lobsters.vcf.gz")
 # Q 1.1.1: 8411 loci and 586 samples
 # the display of the lobsters value shows it.
 
+# The following syntax:
+# f(a, b, c) do i
+#   [ stuff ]
+# end
+#
+# is equivalent to
+# f(i -> [ stuff ], a, b, c)
+# , i.e, it creates an anonymous function and passes it as
+# the first argument to a function 
+
 samplenames = collect(samples(lobsters))
 popnames = map(samplenames) do samplename
     String(first(split(samplename, '_')))

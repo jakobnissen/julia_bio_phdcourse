@@ -6,9 +6,7 @@ Most of the questions can be approached in multiple different ways.
 Some solutions will be simpler, and/or much more efficient than others.
 Try not to worry too much about efficiency and focus on getting the job done.
 
-If you complete the exercises quickly and have spare time, you can try to optimize one or more of the exercises as much as you can!
-
-If you don't finish them, don't worry.
+If you don't finish them, don't worry, it doesn't matter.
 These exercises will not be graded.
 They are simply meant as practise to get to use the software to solve various small tasks.
 
@@ -18,6 +16,8 @@ Of course you can ask for help!
 
 Solutions for the exercises are provided if you get stuck.
 They are intentionally left without comments, and generally NOT optimized for speed.
+PLEASE don't look at the solutions until after you've solved the problem yourself.
+You will gain nothing from it.
 
 All packages necessary to solve these issues should be in the provided `Project.toml` file.
 Instantiate that to install the packages.

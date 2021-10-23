@@ -25,52 +25,117 @@ Look at the sample names of the lobsters, e.g. `BON_01`.
 This name means "Lobster 1 sampled at location BON".
 Let's consider each sampling location a population of lobsters.
 
+* Q 1.1.3: Given the string `"BON_01"` composed of a prefix, and underscore, and a suffix, how do you extract the prefix? 
+
 The method `populations!(::PopData, ::Vector{String}, ::Vector{String})` can be used to add population information to a `PopData` object.
 Add population information to your lobster dataset.
 
-* Q 1.1.3: How many distinct populations are there?
+Extract the sample names from the `.meta` dataframe of the lobsters `PopData`.
+Then create a corresponding vector of population names from the sample names vector,
 
-Now let's do some data wrangling.
+* Q 1.1.4: How many distinct populations are there?
+
+Use your two vectors with the `populations!` function to set the population names of your `PopData`.
+
+Now let's do some data exploration to see what kind of data we have in a typical `PopData` object.
 The `.loci` field of the `PopData` contains the locus information for the lobsters.
 
-Focus only on that same locus "un_1002665", by subsetting your dataframe.
+Focus only on that same locus "un_1002665". You can do this by figuring out how to subset your dataframe, or by extracting the relevant columns of the dataframe and filtering them.
 
-* Q 1.1.4: What distinct genotypes does the loci "un_1002665" have?
+* Q 1.1.5: What distinct genotypes does the loci "un_1002665" have?
 
 One of the genotypes is called `(1, 4)`, meaning one allele of type 1 and one allele of type 4, i.e. a lobster heterozygous at that loci.
 
 Group the subset of the dataframe by the different populations using the `groupby` function of the package `DataFrames`.
 
-* Q 1.1.5: Does the genotype (1, 4) of this locus exist in every population sampled?
+* Q 1.1.6: Does the genotype (1, 4) of this locus exist in every population sampled?
+
+In general, you can use the `groupby` function on column X to answer questions about the different values of X - for example, if you wanted to know which sample was most homozygous, you could group by sample and compute homozygosity for each group.
 
 Let's clean up the data a bit.
-For example, can we throw any data away?
+When dealing with data, missing values are a constant source of annoyance.
+Julia has a quite principled way of dealing with missing values, using the value `missing`.
+This value has special behaviour:
 
-Check if there are any loci without genetic diversity, i.e. where there is only 1 genotype (plus perhaps a `missing` genotype).
+```julia
+julia> missing == 1
+missing
 
-Remove any such loci.
+julia> missing == missing
+missing
+```
 
-* Q 1.1.6: How many loci were removed?
+The reason for this behaviour is that if a value is missing, it's unknown whether its true value is equal to 1 or not, so operations like `==` can neither return true, nor false.
+I personally hate this behaviour with a fiery passion, but then again, I'm not a data scientist.
+
+* Q 1.1.7: Find out how to check if some object `x` is `missing`. How?
+
+Time to clean the data a little.
+For example, can you throw any useless data away?
+If there are any loci without genetic diversity, i.e. where there is only 1 genotype (plus perhaps a `missing` genotype), then that locus gives no information and can be removed.
+
+For each genotype, count the number of distinct genotypes.
+Remember to not consider `missing` when you count!
+
+First, try to simply count _all_ the distinct genotypes in the entire dataset across all loci.
+Yeah, this doesn't really make biological sense (because two genotypes at two different loci both called `(1, 4)` refers to different alleles), but do it just to get a hang of it.
+
+* Q 1.1.8: How many distinct values are there in the "genotype" column of the `.loci` dataframe, not counting `missing`?
+
+Figure out how to remove `missing` from a vector of values such as `[5, 2, missing, 19]`.
+
+Now do the same counting, but for each locus individually.
+
+* Q 1.1.9: How many loci has only 1 distinct genotype (plus possibly `missing`)?
+
+Figure out how to remove all those loci from the `PopData`.
 
 That missing data in the `.loci` dataframe sure is annoying.
-It would be nice if we could remove loci or samples where any genotype was missing.
+It would be nice if we could remove all loci and samples where any genotype was missing.
 Of course, you could risk having to remove too much data, so you need to figure out how much data would be removed if you removed all samples/loci with at least one missing genotype.
 
-Here, you can use `groupby again`
+To count the number of samples with at least one missing genotype, 
 
-* Q 1.1.7: How many samples/loci would we need to remove?
+* Q 1.1.10: How many samples have at least one genotype as `missing`?
+* Q 1.1.11: How many different _genotypes_ are missing for at least one sample?
+* Q 1.1.12: Make a judgement call: Does it make sense to remove samples and/or loci with at least one missing value?
 
 ### Exercise 1.2: Allele frequencies
 The function `allele_freqtable` gives the allele frequencies.
 Get the allele frequencies of all loci across all samples - that is - just of the entire `PopData` object.
+Explore the returned object.
 
-* Q 1.2.1: Which loci has the most evenly distributed allele frequency (i.e. closest to 50-50), and which the most lopsided (closest to 0-100)?
+* Q 1.2.1. What type is the returned value? Explain its layout a little.
+
+From just looking at the value in the REPL, it looks like most loci has only 2 different alleles.
+
+* Q 1.2.2: Do ALL loci have 2 different alleles only?
+
+The next few exercises take quite a bit of memory (PopGen is not very optimized...), so you will need to restrict your data to not risk running out of memory.
+
+Create a new `PopData` object which only contains data from lobsters of the populations "LOB" and "SEA".
+* Q 1.2.3: How many lobsters and loci do you have in this subset?
 
 Let's do a crude, homemade population analysis.
-The function `pairwise_identical` will create a table with the fraction of loci that have identical genotypes for each sample-sample pair (it takes some time to compute).
-For each of the N populations, calculate the mean identity between samples of those populations. Put it in an NxN matrix.
+The function `pairwise_identical` will create a table with the fraction of loci that have identical genotypes for each sample-sample pair.
+Run it on your subset of lobsters from only the two aforementioned populations.
+Like before, read the documentation of `pairwises_identical` and look at the output type and figure out what information it contains.
+The `n` column is not that well documented: I think it's the number of loci used for the given row. 
 
-* Q 1.2.2: Based on this simple measure, are the populations similar? That is, is the between- and within-population identities similar?
+Compute three mean values of pairwise identity:
+    - Lobster pairs where both are from the LOB population
+    - Pairs where both are from the SEA population
+    - Pairs where they are from different populations
+
+There is no built-in function to do this in PopGen, as far as I'm aware.
+You can use the following sub-steps:
+- How to you loop over the rows in a `DataFrame`?
+- When iterating over the rows, given a row, how can you tell which of the three categories (LOB/LOB, SEA/SEA, LOB/SEA) the row represents, in order to put the `.identical` value into a corresponding vector?
+- Given a vector of floats in the interval `[0.0, 1.0]`, how do you compute the mean value of it?
+
+* Q 1.2.4: What is the mean value of pairwise identity for each of the three groups LOB/LOB, SEA/SEA and LOB/SEA?
+
+* Q 1.2.5: Based on this simple measure, are the populations similar? That is, is the between- and within-population identities similar?
 
 ### Exercise 1.3: Check for siblingship
 Let's do a more serious job of analysing these populations.
@@ -79,52 +144,71 @@ If we accidentally included a bunch of siblings in a population, our sample will
 
 We can check for relatedness by checking whether some individuals have more alleles in common than we would expect by random chance.
 There are many statistical methods of doing this.
-I don't understand the difference between them, so let's just pick the Lynch-Li method.
+I don't understand the difference between them (I'm not a population geneticist), so let's just pick the Lynch-Li method.
 
-This analysis is slow, so let's restrict out dataset:
-Create a `PopObj` with only the population `TRI`, and a random selection of 250 loci. Call it `subpop`
+This analysis is slow, so let's restrict out dataset even further to only the "LOB" population and a random selection of 250 loci.
 
+To avoid including loci not present in the "LOB" population, first subset your dataframe to only the LOB population. After that, you can draw the random loci.
+
+* Q 1.3.1: How do you sample 250 values from a vector without replacement?
+
+Subset your `PopData` further to only include 50 loci chosen at random.
 You can now calculate relatedness of your data.
-Use the `relatedness` function on your sub-population with the Lynch-Li method and 100 bootstrap iterations.
+Use the `relatedness` function on your sub-population with the Lynch-Li method, without using bootstrap (i.e. 1 iteration only, as is the default).
 
-Inspect the dataframe.
-Siblings have relatedness of 0.5, and half-siblings of 0.25.
+Inspect the result.
 
-Q 1.3.1: What is the distribution of mean relatedness (`LynchLi_mean`)? Could there be a problems with siblings in the data?
+* Q 1.3.2: What is the type and layout of the result?
+
+Have a look at the relatedness column (`LynchLi`).
+To plot it, you need to make a copy of the column without missing values
+
+* Q 1.3.3: How do you create a copy of a vector with values removed?
+
+Use the package `UnicodePlots` to plot a histogram of the relatedness, without the missing values.
 
 One of the problems of relatedness analysis is that they're not well-calibrated.
-That is, while we expect a half-sibling to have relatedness of 0.25, due to the random nature of inheritance, any observed half-sibling pair might have more or less than 25% of their alleles in common relative to a background distribution.
+That is, while we expect a half-sibling to have relatedness of 0.25, due to the random nature of inheritance of any one locus, any observed half-sibling pair might have more or less than 25% of their alleles in common relative to a background distribution.
 
-Let's simulate some siblings and do a comparison between the observed data and simulated data.
+* Q 1.3.4: Simply looking at the distribution of relatedness, do you think it's likely there's a problem with too many siblings in your data?
 
-Use `simulate_sibship` to simulate at least 500 unrelated, 500 half-sibling and 500 sibling lobsters from your sub-population.
-Then compute relatedness for each population using the same method (Lynch-Li).
+To be sure, let's simulate some siblings and do a comparison between the observed data and simulated data.
 
-Compare the distribution of `LynchLi` values between:
-* Your observed subpopulation
-* The simulated unrelated population
-* The simulated half-siblings
-* The simulated full-siblings
+The package PopGenSims.jl has a function `simulate_sibship` for this use-case.
+Use it to simulate at least 500 unrelated, 500 half-sibling and 500 sibling lobster pairs from your sub-population.
 
-* Q 1.3.2: Based on these distributions, are there still a problem with siblingship in your subpopulation?
+Inspect the resulting `PopData` object.
+Note the names of the populations of the simulated lobsters.
+These represent unrelated, full siblings and half-siblings.
+
+Use `exclude` to create three subgroups from your simulated data:
+A) The simulated unrelated population
+B) The simulated half-siblings
+C) The simulated full-siblings
+
+Then, for each group, calculate relatedness using the same method as you did for your original non-simulated population, and plot a histogram of it.
+Hint: To show a histogram in a loop, call `display` on the histogram.
+
+Compare the distribution of relatedness across the three groups with your data.
+
+* Q 1.3.5: Based on these distributions of relatedness, does your original lobster population have a problem with too many siblings?
 
 ### Exercise 1.4: Fst and HWE measures
-It looks like we're OK w.r.t siblingship.
+In an earlier question, you checked pairwise identity between two populations.
+Now, let's try to do a better job of figuring out whether the populations are diverged by estimating the index of fixation Fst.
 
-Compared to your home-made test in Q 1.2.2, the Fst measure is a more rigorous test for within- vs between population differences.
+Use `pairwise_fst` on your whole dataset with all the lobsters (not the subset)!
+Let's consider populations diverged if the Fst is above 0.125.
 
-Do a `pairwise_fst` test on your whole data (not the subset)!
-
-* Q 1.4.1: What values do you get? Compare it to your home-made population analysis. Do they agree?
+* Q 1.4.1: What Fst values do you get?
+Compare it to your home-made population analysis in the earlier question comparing the LOB and SEA populations.
+Does the Fst analysis broadly agree?
 
 It could be that these lobsters just mate completely randomly with each other, thereby erasing any kind of population signal.
 Maybe there are is no population structure at all in this dataset.
 A more sensitive test of non-random mating is a test for Hardy-Weinberg equilibrium (HWE).
 
-Use PopGen.jl to do a chi-square test for HWE for each locus across all samples. Then do HWE tests by population.
-
-If mating was random, you would expect the P value to be randomly distributed in [0,1].
+Search the PopGen docs to find out how to do a chi-square test for HWE for each locus.
+If mating was random, you would expect the P value of the test for each locus to be randomly distributed in [0,1].
 
 * Q 1.4.2: Is mating random in the total population, or are the P-values clearly skewed towards 0?
-
-* Q 1.4.3: How does it look when doing the analysis by population? Can you conclude anything from this?

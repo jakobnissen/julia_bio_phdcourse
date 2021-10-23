@@ -40,7 +40,7 @@ Therefore, you need to be able to search for solutions on your own. Here are a f
   This will search for all functions and types where "pairwise alignment" is part of the docstring.
 
 Solutions for the exercises are provided if you get stuck.
-They are intentionally left with few comments, and generally NOT optimized for speed.
+They are intentionally NOT optimized for speed.
 PLEASE don't look at the solutions until after you've tried to solve the problem yourself.
 You will gain nothing from doing so.
 

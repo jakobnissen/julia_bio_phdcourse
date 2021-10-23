@@ -86,7 +86,7 @@ open(FASTA.Writer, "/tmp/hiv.aln.faa") do writer
 end
 
 # Q 4.3.1
-reader = FASTA.Reader(GzipDecompressorStream(open("../fastx/ns.fna.gz")))
+reader = FASTA.Reader(GzipDecompressorStream(open("../../data/ns.fna.gz")))
 ns_records = collect(reader)
 close(reader)
 

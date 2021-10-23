@@ -2,59 +2,67 @@
 Welcome to the first exercise!
 This time, you'll be doing some basic population genetics with PopGen.jl
 
-Most of the questions can be approached in multiple different ways.
-Some solutions will be simpler, and/or much more efficient than others.
-Try not to worry too much about efficiency and focus on getting the job done.
-
-If you don't finish them, don't worry, it doesn't matter.
-These exercises will not be graded.
-They are simply meant as practise to get to use the software to solve various small tasks.
-
-To solve these exercises, you need to be able to search for suitable methods on your own.
-Use the excellent PopGen.jl documentation page, and the Julia function `apropos`.
-Of course you can ask for help!
-
-Solutions for the exercises are provided if you get stuck.
-They are intentionally left without comments, and generally NOT optimized for speed.
-PLEASE don't look at the solutions until after you've solved the problem yourself.
-You will gain nothing from it.
-
-All packages necessary to solve these issues should be in the provided `Project.toml` file.
-Instantiate that to install the packages.
+PopGen's functions work on data of the abstract type `PopObj`.
+Currently, the only concrete subtype of `PopObj` is `PopData`.
+Hence, you will be working a lot with `PopData` objects in this exercise.
 
 ### Exercise 1.1: Load in the data
-The file `lobsters.vcf.gz` is a gzipped VCF-file containing genetic markers of some wild American lobsters (_Homarus americanus_).
+The file `lobsters.vcf.gz` in the data directory is a gzipped VCF-file containing genetic markers of some wild American lobsters (_Homarus americanus_).
 
-Use the `vcf` function to load in the file as a `PopObj`.
+Use the `vcf` function to load in the file as a `PopData` object.
 
-* Q 1.1.1: How many loci and samples are there in the file?
+* Q 1.1.1: Inspect the type by typing it into the terminal. How many loci (SNP markers) and samples are there in the file?
 
-The prefix of the sample names represent the location they were sampled.
-Let's consider each location a "population".
-Use the `populations!` function to add population information to the PopObj.
+First, get a feeling of how the object is stored in memory.
 
-* Q 1.1.2: How many distinct populations are there?
+* Q 1.1.2: What fields do the `PopData` have? What are their types?
 
-Have a look at the data:
+You will note when you loaded the data in there was a warning that:
 
-* Q 1.1.3: How many distinct genotypes does the loci "un_1002665" have?
-* Q 1.1.4: Does the genotype (1, 4) of this locus exist in every population sampled?
+> population info must be added
+
+Look at the sample names of the lobsters, e.g. `BON_01`.
+This name means "Lobster 1 sampled at location BON".
+Let's consider each sampling location a population of lobsters.
+
+The method `populations!(::PopData, ::Vector{String}, ::Vector{String})` can be used to add population information to a `PopData` object.
+Add population information to your lobster dataset.
+
+* Q 1.1.3: How many distinct populations are there?
+
+Now let's do some data wrangling.
+The `.loci` field of the `PopData` contains the locus information for the lobsters.
+
+Focus only on that same locus "un_1002665", by subsetting your dataframe.
+
+* Q 1.1.4: What distinct genotypes does the loci "un_1002665" have?
+
+One of the genotypes is called `(1, 4)`, meaning one allele of type 1 and one allele of type 4, i.e. a lobster heterozygous at that loci.
+
+Group the subset of the dataframe by the different populations using the `groupby` function of the package `DataFrames`.
+
+* Q 1.1.5: Does the genotype (1, 4) of this locus exist in every population sampled?
 
 Let's clean up the data a bit.
-First, check if there are any loci without genetic diversity, i.e. where there is only 1 genotype (plus perhaps `missing`).
+For example, can we throw any data away?
+
+Check if there are any loci without genetic diversity, i.e. where there is only 1 genotype (plus perhaps a `missing` genotype).
+
 Remove any such loci.
 
-* Q 1.1.5: How many loci were removed?
+* Q 1.1.6: How many loci were removed?
 
-That missing data sure is annoying.
+That missing data in the `.loci` dataframe sure is annoying.
 It would be nice if we could remove loci or samples where any genotype was missing.
-Of course, we could risk having to remove too much data.
+Of course, you could risk having to remove too much data, so you need to figure out how much data would be removed if you removed all samples/loci with at least one missing genotype.
 
-* Q 1.1.6: How many samples/loci would we need to remove if we removed all samples/loci with at least one missing genotype?
+Here, you can use `groupby again`
+
+* Q 1.1.7: How many samples/loci would we need to remove?
 
 ### Exercise 1.2: Allele frequencies
 The function `allele_freqtable` gives the allele frequencies.
-Get the allele frequencies of all loci across all samples.
+Get the allele frequencies of all loci across all samples - that is - just of the entire `PopData` object.
 
 * Q 1.2.1: Which loci has the most evenly distributed allele frequency (i.e. closest to 50-50), and which the most lopsided (closest to 0-100)?
 

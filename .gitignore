@@ -1,4 +1,5 @@
 data/
 slides/*.key
+slides/*.ods
 .vscode
-Manifest.toml
+**/Manifest.toml

@@ -3,3 +3,4 @@ slides/*.key
 slides/*.ods
 .vscode
 **/Manifest.toml
+todo.md

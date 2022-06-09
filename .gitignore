@@ -1,3 +1,4 @@
 data/
 slides/*.key
 .vscode
+Manifest.toml

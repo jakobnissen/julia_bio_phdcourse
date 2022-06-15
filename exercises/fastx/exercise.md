@@ -1,9 +1,11 @@
-# Exercise 3: FASTX, FASTQ and kmers
-In this exercise, you'll learn how to read and write FASTA and FASTQ files. In the last part, you'll also work with kmers and create a simple kmer spectrum from some FASTQ data.
+# Exercise 3: FASTX
+In this exercise, you'll learn how to read and write FASTA and FASTQ files.
+In the last part, you'll also see a concrete usecase for kmers, by creating a simple kmer spectrum from some FASTQ data.
 
 You will notice the files are compressed with gzip (they have the .gz extension).
 This is common with FASTA and FASTQ files, because their size can make storage expensive, and because they compress well due to them being plaintext files.
-To read the files, you need to first import `CodecZlib` and use `GzipDecompressorStream`. Here is an example
+To read the files, you need to first import `CodecZlib` and use `GzipDecompressorStream`.
+Here is an example
 
 ```julia
 using CodecZlib
@@ -19,7 +21,7 @@ close(reader) # always close after use
 
 * Q 3.1.3: How many records have a sequence length longer than the average in `ns.fna`?
 
-* Q 3.1.4: Load in `ns.fna` into a `Vector{Tuple{String, LongDNASeq}}` with the ID and sequence of each FASTA record.
+* Q 3.1.4: Load in `ns.fna` into a `Vector{Tuple{String, LongDNA{4}}}` with the ID (identifier, not description) and sequence of each FASTA record.
 
 * Q 3.1.5: Write a new file `ns.revcomp.fna` which contains the same record in the same order as `ns.fna`, but with all the sequence reverse-complemented, and where all records have had their description removed
 
@@ -35,12 +37,10 @@ It is possible to make code for these exercises very fast.
 
 * Q 3.2.3: How big a fraction of the reads contain only A, C, G or T in their sequences?
 
-### Exercise 3.3: Kmers
-Search the BioSequences.jl documentation on the Internet to find out how to get kmers from a biosequence.
+### Exercise 3.3: Make a kmer spectrum
+For this exercise, let's consider 21-mers (of type `DNAKMer{21}`).
 
-For this exercise, let's consider 21-mers (of type `DNAMer{21}`).
-
-* Q 3.3.1: How many total 21-mers in the _M. abscessus_ file begin with `AAA`? Remember to count both sequences and their reverse complement.
+* Q 3.3.1: How many total 21-mers in the _M. abscessus_ file begin with `AAA`? Remember to count both the 21-mers and their reverse complement.
 
 A "canonical" kmer is the lexographically smallest of a kmer and its reverse-complement. In all the following exercises, consider only canonical kmers.
 _Hint: See the function `canonical`_
@@ -81,5 +81,5 @@ With the depth, you can estimate the genome size `S` of _M. abscessus_ using S =
 
 * Q 3.3.6: What is the genome size?
 
-Use a search engine to look up the genome size of the bactierum.
-Verify this estimate is within 1% of the reported genome size of the bacterium.
+Use a search engine to look up the genome size of the bactierum (it's Mycobacterium abscessus subsp. bolletii BDT)
+Verify this estimate is within a few percent of the reported genome size of the bacterium.

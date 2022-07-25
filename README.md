@@ -1,4 +1,4 @@
-# Jakob Nissen's Julia course, October 2021
+# Jakob Nissen's Julia course, October 2022
 This is a part of a larger introductory Julia course for biologists.
 The part in this repository covers some important packages of the BioJulia ecosystem.
 
@@ -41,11 +41,11 @@ Therefore, you need to be able to search for approaches on your own. Here are a 
 * If you have an object `x`, try just typing it into the REPL to see what it looks like
 * Use `typeof(x)` to get its type.
 * Get help about a type `T` or a function `f` with `?T` and `?f`
-* Use `dump(x)` to see the memory layout of `x`, and `dump(typeof(x))` to see the general memory layout of objects of the same type.
+* Use `dump(typeof(x))` to see the memory layout of objects of the same type as `x`
 * To see what you can do with a type, try checking `methodswith(typeof(x), supertypes=true)`
 * If you want to find functions about e.g. pairwise alignment, try running `apropos("pairwise alignment")`.
   This will search for all functions and types where "pairwise alignment" is part of the docstring.
-* Try to find the documentation of the packages you are using and skim them
+* Go online and find the documentation of the packages you are using and skim them
 
 Solutions for the exercises are provided if you get stuck.
 They are intentionally NOT optimized for speed.
